@@ -1,0 +1,178 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -304,
+        0
+      ],
+      "id": "a17019cd-c934-45fd-9be6-7fd89436f3b6",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "Scrape single URL",
+        "url": "https://internshala.com/internships/work-from-home-machine-learning-internships/"
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        0
+      ],
+      "id": "bf8e24da-8d1c-457e-a6cd-a0530bb8b333",
+      "name": "Scrape single URL",
+      "credentials": {
+        "apifyApi": {
+          "id": "F84P9qXL5wLmfdxk",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1dxZimiG6BFZDzxhx-bDHhS-ym_TwBGXSB2NrSzTANbo",
+          "mode": "list",
+          "cachedResultName": "jobfile",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dxZimiG6BFZDzxhx-bDHhS-ym_TwBGXSB2NrSzTANbo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dxZimiG6BFZDzxhx-bDHhS-ym_TwBGXSB2NrSzTANbo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Title": "={{ $json.metadata.jsonLd[2].itemListElement[5].name }}",
+            "URL": "={{ $json.metadata.jsonLd[2].itemListElement[5].url }}"
+          },
+          "matchingColumns": [
+            "URL"
+          ],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        96,
+        0
+      ],
+      "id": "242fff0f-69fc-4add-b4a8-f2c0105a9807",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "hAEh2ujFvR7qqMj8",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "1654037513",
+        "text": "=New Internship Alert                              \ntitle: {{ $json.Title }}\nURL:{{ $json.URL }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        304,
+        0
+      ],
+      "id": "fbd34b00-0600-4966-b121-95df9e9d93de",
+      "name": "Send a text message",
+      "webhookId": "aa72ceaf-37c2-4d05-91a3-c1c9ac3d41a2",
+      "credentials": {
+        "telegramApi": {
+          "id": "TjxJtxIUHxz85Fke",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Scrape single URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape single URL": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a00e79f0-3aca-4538-8145-9d928ca97a2b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "521d99b7f97f2af2356fe1efa2ad7d213dc0403ae280ed80ef7d59eb5eaf0189"
+  },
+  "id": "p1CiJyNb5KEwQrwO",
+  "tags": []
+}
